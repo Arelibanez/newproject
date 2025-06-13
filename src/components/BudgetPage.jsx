@@ -91,19 +91,19 @@ function BudgetPage() {
                   value={expenseName}
                   onChange={(e) => setExpenseName(e.target.value)}
                   placeholder="Nome spesa..."
-                  className="border-2 border-pink-200 rounded-md px-4 py-2 w-full sm:flex-1 mb-2 sm:mb-0 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-pink-700 placeholder-pink-300"
+                  className="border-2 border-pink-200 rounded-md px-3 sm:px-4 py-2 w-full sm:flex-1 mb-2 sm:mb-0 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-pink-700 placeholder-pink-300"
                 />
                 <input
                   type="number"
                   value={expenseAmount}
                   onChange={(e) => setExpenseAmount(e.target.value)}
                   placeholder="Importo..."
-                  className="border-2 border-pink-200 rounded-md px-4 py-2 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-pink-700 placeholder-pink-300"
+                  className="border-2 border-pink-200 rounded-md px-3 sm:px-4 py-2 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-pink-700 placeholder-pink-300"
                 />
               </div>
               <button
                 type="submit"
-                className="bg-pink-500 text-white px-6 py-2.5 rounded-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50 w-full text-sm sm:text-base"
+                className="bg-pink-500 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50 w-full text-sm sm:text-base"
               >
                 Aggiungi Spesa
               </button>

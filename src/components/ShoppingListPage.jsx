@@ -42,25 +42,58 @@ function ShoppingListPage() {
 
   const addItem = async (e) => {
     e.preventDefault();
-    if (newItemText.trim() === '' || newItemQuantity < 1) return;
-    const newItem = { text: newItemText, quantity: parseInt(newItemQuantity, 10), purchased: false };
-    
-    // Add to Supabase
-    const { data, error } = await supabase
-      .from('shopping_list_items')
-      .insert([newItem])
-      .select(); // Return the inserted row
 
-    if (error) {
-      console.error('Error adding item:', error);
-      alert("Errore durante l'aggiunta dell'articolo.");
-    } else if (data && data.length > 0) {
-      setItems(prevItems => [...prevItems, {...data[0], quantity: data[0].quantity || 1, purchased: data[0].purchased || false}]);
-      setNewItemText('');
-      setNewItemQuantity(1);
-    } else {
-      console.error('No data returned after insert');
-      alert("Errore: nessun dato restituito dopo l'aggiunta.");
+    const text = newItemText.trim();
+    const quantity = parseInt(newItemQuantity, 10);
+
+    if (text === '' || isNaN(quantity) || quantity < 1) {
+      alert("Assicurati di aver inserito un nome per l'articolo e una quantità valida (almeno 1).");
+      return;
+    }
+
+    const newItem = { text: text, quantity: quantity, purchased: false };
+    
+    try {
+      // Add to Supabase
+      const { data, error: supabaseError } = await supabase
+        .from('shopping_list_items')
+        .insert([newItem])
+        .select();
+
+      if (supabaseError) {
+        console.error('[DEBUG] Type of supabaseError:', typeof supabaseError);
+        console.error('[DEBUG] supabaseError (raw object - try expanding this in console):', supabaseError);
+        try {
+          console.error('[DEBUG] supabaseError (JSON.stringify):', JSON.stringify(supabaseError));
+        } catch (e_stringify) {
+          console.error('[DEBUG] supabaseError could not be stringified:', e_stringify.message);
+        }
+
+        let errorMessage = "Errore durante l'aggiunta dell'articolo.";
+        if (supabaseError.message) {
+          errorMessage += ` Dettagli: ${supabaseError.message}`;
+        } else {
+          errorMessage += " Nessun dettaglio messaggio disponibile.";
+        }
+        if (supabaseError.details) {
+          errorMessage += ` Info: ${supabaseError.details}`;
+        }
+        if (supabaseError.hint) {
+          errorMessage += ` Suggerimento: ${supabaseError.hint}`;
+        }
+        errorMessage += " Controlla la console per l'oggetto errore completo (cerca i log [DEBUG]) e la scheda Network per la risposta del server.";
+        alert(errorMessage);
+      } else if (data && data.length > 0) {
+        setItems(prevItems => [...prevItems, {...data[0], quantity: data[0].quantity || 1, purchased: data[0].purchased || false}]);
+        setNewItemText('');
+        setNewItemQuantity(1);
+      } else {
+        console.error('No data returned after insert. Item sent:', newItem);
+        alert("Errore: nessun dato restituito dopo l'aggiunta (l'item inviato era: " + JSON.stringify(newItem) + "). Controlla la console e la scheda Network.");
+      }
+    } catch (e) {
+      console.error('Unexpected error during addItem:', e);
+      alert(`Si è verificato un errore imprevisto: ${e.message || 'Nessun dettaglio'}. Controlla la console e la scheda Network.`);
     }
   };
 
@@ -202,7 +235,7 @@ function ShoppingListPage() {
           {items.map(item => (
             <li
               key={item.id}
-              className={`p-3 rounded-lg transition-all duration-300 ease-in-out ${item.purchased ? 'bg-pink-100 text-pink-500 opacity-80' : 'bg-white hover:bg-pink-100 border border-pink-200'
+              className={`p-2 sm:p-3 rounded-lg transition-all duration-300 ease-in-out ${item.purchased ? 'bg-pink-100 text-pink-500 opacity-80' : 'bg-white hover:bg-pink-100 border border-pink-200'
               }`}
             >
               {editingItemId === item.id ? (
